@@ -11,6 +11,9 @@ class EmailController extends Controller
     {
         $requestBody = $request->validated();
 
+        // Test RabbitMQ connection
+        \Amqp::publish('', $request->getContent(), ['queue' => 'email_queue',]);
+
         return response()
             ->json([ 'data' => $requestBody ])
             ->setStatusCode(200);

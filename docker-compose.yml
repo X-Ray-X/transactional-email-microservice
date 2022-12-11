@@ -8,6 +8,7 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: sail-8.1/app
+        container_name: 'app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -26,6 +27,7 @@ services:
             - pgsql
     pgsql:
         image: 'postgres:14'
+        container_name: 'pgsql'
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:
@@ -42,6 +44,21 @@ services:
             test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
             retries: 3
             timeout: 5s
+    rabbitmq:
+        image: rabbitmq:3.11.4-management-alpine
+        container_name: 'rabbitmq'
+        hostname: 'rabbitmq'
+        restart: always
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        volumes:
+            - '~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/'
+            - '~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq'
+            - './docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro'
+            - './docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
