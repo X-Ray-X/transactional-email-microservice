@@ -27,7 +27,7 @@ class Email
         $this->htmlPart = $htmlPart;
     }
 
-    public function send() : array
+    public function send(): array
     {
         $payload = [
             'id' => $this->id,

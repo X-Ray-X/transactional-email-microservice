@@ -21,7 +21,8 @@ return [
             'connect_options'     => [], // See https://github.com/php-amqplib/php-amqplib/blob/master/PhpAmqpLib/Connection/AMQPSSLConnection.php
             'queue_durable'       => env('RABBITMQ_QUEUE_DURABLE', true),
             'queue_properties'    => ['x-ha-policy' => ['S', 'all']],
-            'timeout'             => 0
+            'timeout'             => 0,
+            'persistent'          => true,
         ],
 
     ],
