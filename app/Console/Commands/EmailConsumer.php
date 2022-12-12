@@ -2,11 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Workers\EmailWorkerInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class EmailConsumer extends Command
 {
+    private EmailWorkerInterface $emailWorker;
+
     /**
      * @var string
      */
@@ -27,6 +30,16 @@ class EmailConsumer extends Command
     protected $description = 'Consumes emails from the queue';
 
     /**
+     * @param  EmailWorkerInterface  $emailWorker
+     */
+    public function __construct(EmailWorkerInterface $emailWorker)
+    {
+        parent::__construct();
+
+        $this->emailWorker = $emailWorker;
+    }
+
+    /**
      * Execute the console command.
      *
      * @return void
@@ -37,8 +50,7 @@ class EmailConsumer extends Command
             \Amqp::consume($this->queueName, function ($message, $resolver) {
                 $messageData = json_decode($message->body, true);
 
-                //TODO: add an actual sending logic
-                Log::info($messageData);
+                $this->emailWorker->sendEmail($messageData);
 
                 $resolver->acknowledge($message);
 

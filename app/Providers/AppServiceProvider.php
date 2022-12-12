@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Clients\SendgridEmailClient;
+use App\Workers\EmailWorker;
+use App\Workers\EmailWorkerInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(EmailWorkerInterface::class, static function ($app) {
+            return new EmailWorker([
+                $app->make(SendgridEmailClient::class),
+            ]);
+        });
     }
 
     /**
