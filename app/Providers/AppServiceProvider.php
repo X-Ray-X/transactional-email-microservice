@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Clients\MailjetEmailClient;
 use App\Clients\SendgridEmailClient;
 use App\Workers\EmailWorker;
 use App\Workers\EmailWorkerInterface;
@@ -19,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EmailWorkerInterface::class, static function ($app) {
             return new EmailWorker([
                 $app->make(SendgridEmailClient::class),
+                $app->make(MailjetEmailClient::class),
             ]);
         });
     }

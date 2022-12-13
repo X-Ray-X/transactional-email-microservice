@@ -44,7 +44,7 @@ class SendgridEmailClient implements EmailClient
 
             $response = $this->client->send($sendgridMail);
 
-            Log::info(sprintf('Sendgrid response: %s - %s', $response->statusCode(), $response->body()));
+            Log::info(sprintf('Sendgrid response: %s %s', $response->statusCode(), $response->body()));
 
             return $response->statusCode() === Response::HTTP_ACCEPTED;
         } catch (\Exception $exception) {
