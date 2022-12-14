@@ -11,6 +11,7 @@ class Email
     private array $to;
     private string $subject;
     private string $htmlPart;
+    private EmailLog $emailLog;
 
     /**
      * @param  array  $from
@@ -25,6 +26,12 @@ class Email
         $this->to = $to;
         $this->subject = $subject;
         $this->htmlPart = $htmlPart;
+
+        $this->emailLog = (new EmailLog([
+            'email_id' => $this->id,
+            'status' => 'NEW',
+        ]));
+        $this->emailLog->save();
     }
 
     public function send(): array
@@ -38,6 +45,11 @@ class Email
         ];
 
         \Amqp::publish('', json_encode($payload), ['queue' => 'email_queue',]);
+
+        $this->emailLog->update([
+            'status' => 'PROCESSING',
+            'request' => json_encode($payload),
+        ]);
 
         return $payload;
     }

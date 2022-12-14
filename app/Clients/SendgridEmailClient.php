@@ -2,6 +2,7 @@
 
 namespace App\Clients;
 
+use App\Models\EmailLog;
 use Illuminate\Support\Facades\Log;
 use SendGrid;
 use SendGrid\Mail\Mail;
@@ -9,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SendgridEmailClient implements EmailClient
 {
+    public const CLIENT_NAME = 'Sendgrid';
+
     private SendGrid $client;
 
     /**
@@ -17,6 +20,14 @@ class SendgridEmailClient implements EmailClient
     public function __construct(string $apiKey)
     {
         $this->client = new SendGrid($apiKey);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return self::CLIENT_NAME;
     }
 
     /**
@@ -44,7 +55,15 @@ class SendgridEmailClient implements EmailClient
 
             $response = $this->client->send($sendgridMail);
 
-            Log::info(sprintf('Sendgrid response: %s %s', $response->statusCode(), $response->body()));
+            /** @var EmailLog $emailLog */
+            $emailLog = EmailLog::where('email_id', $email['id'])->first();
+
+            $emailLog->update([
+                'email_provider' => self::CLIENT_NAME,
+                'response' => json_encode($response->body()),
+            ]);
+
+            Log::debug(sprintf('Sendgrid response: %s %s', $response->statusCode(), $response->body()));
 
             return $response->statusCode() === Response::HTTP_ACCEPTED;
         } catch (\Exception $exception) {

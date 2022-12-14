@@ -2,12 +2,15 @@
 
 namespace App\Clients;
 
+use App\Models\EmailLog;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
 
 class MailjetEmailClient implements EmailClient
 {
+    public const CLIENT_NAME = 'Mailjet';
+
     private Client $client;
 
     /**
@@ -26,6 +29,14 @@ class MailjetEmailClient implements EmailClient
                 'version' => $version
             ]
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return self::CLIENT_NAME;
     }
 
     /**
@@ -63,7 +74,15 @@ class MailjetEmailClient implements EmailClient
                 ]
             ]]);
 
-            Log::info(sprintf('Mailjet response: %s %s', $response->getStatus(), json_encode($response->getBody())));
+            /** @var EmailLog $emailLog */
+            $emailLog = EmailLog::where('email_id', $email['id'])->first();
+
+            $emailLog->update([
+                'email_provider' => self::CLIENT_NAME,
+                'response' => json_encode($response->getBody()),
+            ]);
+
+            Log::debug(sprintf('Mailjet response: %s %s', $response->getStatus(), json_encode($response->getBody())));
 
             return $response->success();
         } catch (\Exception $exception) {
