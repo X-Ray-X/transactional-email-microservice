@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EmailLogStatus;
 use App\Repositories\EmailLogRepositoryInterface;
 use Ramsey\Uuid\Uuid;
 
@@ -32,7 +33,7 @@ class Email
 
         $this->emailLogRepository->create([
             'email_id' => $this->id,
-            'status' => 'NEW',
+            'status' => EmailLogStatus::NEW,
         ]);
     }
 
@@ -51,7 +52,7 @@ class Email
         $this->emailLogRepository->update(
             $this->id,
             [
-                'status' => 'PROCESSING',
+                'status' => EmailLogStatus::PROCESSING,
                 'request' => json_encode($payload),
             ]
         );

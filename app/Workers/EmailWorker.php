@@ -3,6 +3,7 @@
 namespace App\Workers;
 
 use App\Clients\EmailClient;
+use App\Enums\EmailLogStatus;
 use App\Repositories\EmailLogRepositoryInterface;
 
 class EmailWorker implements EmailWorkerInterface
@@ -41,7 +42,7 @@ class EmailWorker implements EmailWorkerInterface
                 $this->emailLogRepository->update(
                     $email['id'],
                     [
-                        'status' => 'SENT',
+                        'status' => EmailLogStatus::SENT,
                     ]
                 );
 
@@ -52,7 +53,7 @@ class EmailWorker implements EmailWorkerInterface
         $this->emailLogRepository->update(
             $email['id'],
             [
-                'status' => 'FAILED',
+                'status' => EmailLogStatus::FAILED,
             ]
         );
 
