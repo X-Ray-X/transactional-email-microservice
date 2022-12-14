@@ -2,7 +2,7 @@
 
 namespace App\Clients;
 
-use App\Models\EmailLog;
+use App\Repositories\EmailLogRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use SendGrid;
 use SendGrid\Mail\Mail;
@@ -12,13 +12,16 @@ class SendgridEmailClient implements EmailClient
 {
     public const CLIENT_NAME = 'Sendgrid';
 
+    private EmailLogRepositoryInterface $emailLogRepository;
     private SendGrid $client;
 
     /**
+     * @param  EmailLogRepositoryInterface  $emailLogRepository
      * @param  string  $apiKey
      */
-    public function __construct(string $apiKey)
+    public function __construct(EmailLogRepositoryInterface $emailLogRepository, string $apiKey)
     {
+        $this->emailLogRepository =$emailLogRepository;
         $this->client = new SendGrid($apiKey);
     }
 
@@ -55,13 +58,13 @@ class SendgridEmailClient implements EmailClient
 
             $response = $this->client->send($sendgridMail);
 
-            /** @var EmailLog $emailLog */
-            $emailLog = EmailLog::where('email_id', $email['id'])->first();
-
-            $emailLog->update([
-                'email_provider' => self::CLIENT_NAME,
-                'response' => json_encode($response->body()),
-            ]);
+            $this->emailLogRepository->update(
+                $email['id'],
+                [
+                    'email_provider' => self::CLIENT_NAME,
+                    'response' => json_encode($response->body()),
+                ]
+            );
 
             Log::debug(sprintf('Sendgrid response: %s %s', $response->statusCode(), $response->body()));
 

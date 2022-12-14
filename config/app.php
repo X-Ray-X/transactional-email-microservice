@@ -196,6 +196,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         \Bschmitt\Amqp\AmqpServiceProvider::class,
         App\Providers\EmailServiceProvider::class,
+        \App\Providers\RepositoryServiceProvider::class,
 
     ],
 

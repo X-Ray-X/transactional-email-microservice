@@ -3,7 +3,7 @@
 namespace App\Workers;
 
 use App\Clients\EmailClient;
-use App\Models\EmailLog;
+use App\Repositories\EmailLogRepositoryInterface;
 
 class EmailWorker implements EmailWorkerInterface
 {
@@ -13,11 +13,18 @@ class EmailWorker implements EmailWorkerInterface
     private array $mailers;
 
     /**
-     * @param array  $mailers
+     * @var EmailLogRepositoryInterface
      */
-    public function __construct(array $mailers)
+    private EmailLogRepositoryInterface $emailLogRepository;
+
+    /**
+     * @param  array  $mailers
+     * @param  EmailLogRepositoryInterface  $emailLogRepository
+     */
+    public function __construct(array $mailers, EmailLogRepositoryInterface $emailLogRepository)
     {
         $this->mailers = $mailers;
+        $this->emailLogRepository = $emailLogRepository;
     }
 
     /**
@@ -28,23 +35,26 @@ class EmailWorker implements EmailWorkerInterface
      */
     public function sendEmail(array $email): bool
     {
-        /** @var EmailLog $emailLog */
-        $emailLog = EmailLog::where('email_id', $email['id'])->first();
-
         foreach ($this->mailers as $mailer) {
             if ($mailer->send($email)) {
 
-                $emailLog->update([
-                    'status' => 'SENT',
-                ]);
+                $this->emailLogRepository->update(
+                    $email['id'],
+                    [
+                        'status' => 'SENT',
+                    ]
+                );
 
                 return true;
             }
         }
 
-        $emailLog->update([
-            'status' => 'FAILED',
-        ]);
+        $this->emailLogRepository->update(
+            $email['id'],
+            [
+                'status' => 'FAILED',
+            ]
+        );
 
         return false;
     }

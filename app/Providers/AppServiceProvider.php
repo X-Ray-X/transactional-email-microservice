@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Clients\MailjetEmailClient;
 use App\Clients\SendgridEmailClient;
+use App\Repositories\EmailLogRepositoryInterface;
 use App\Workers\EmailWorker;
 use App\Workers\EmailWorkerInterface;
 use Illuminate\Support\ServiceProvider;
@@ -21,7 +22,8 @@ class AppServiceProvider extends ServiceProvider
             return new EmailWorker([
                 $app->make(SendgridEmailClient::class),
                 $app->make(MailjetEmailClient::class),
-            ]);
+            ],
+            $app->make(EmailLogRepositoryInterface::class));
         });
     }
 

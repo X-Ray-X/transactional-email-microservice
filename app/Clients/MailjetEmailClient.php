@@ -2,7 +2,7 @@
 
 namespace App\Clients;
 
-use App\Models\EmailLog;
+use App\Repositories\EmailLogRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
@@ -11,16 +11,20 @@ class MailjetEmailClient implements EmailClient
 {
     public const CLIENT_NAME = 'Mailjet';
 
+    private EmailLogRepositoryInterface $emailLogRepository;
     private Client $client;
 
     /**
+     * @param  EmailLogRepositoryInterface  $emailLogRepository
      * @param  string  $key
      * @param  string  $secret
      * @param  bool  $performer
      * @param  string  $version
      */
-    public function __construct(string $key, string $secret, bool $performer = true, string $version = 'v3.1')
+    public function __construct(EmailLogRepositoryInterface $emailLogRepository, string $key, string $secret, bool $performer = true, string $version = 'v3.1')
     {
+        $this->emailLogRepository = $emailLogRepository;
+
         $this->client = new Client(
             $key,
             $secret,
@@ -74,13 +78,13 @@ class MailjetEmailClient implements EmailClient
                 ]
             ]]);
 
-            /** @var EmailLog $emailLog */
-            $emailLog = EmailLog::where('email_id', $email['id'])->first();
-
-            $emailLog->update([
-                'email_provider' => self::CLIENT_NAME,
-                'response' => json_encode($response->getBody()),
-            ]);
+            $this->emailLogRepository->update(
+                $email['id'],
+                [
+                    'email_provider' => self::CLIENT_NAME,
+                    'response' => json_encode($response->getBody()),
+                ]
+            );
 
             Log::debug(sprintf('Mailjet response: %s %s', $response->getStatus(), json_encode($response->getBody())));
 
