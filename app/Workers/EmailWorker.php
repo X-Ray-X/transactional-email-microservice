@@ -32,7 +32,7 @@ class EmailWorker implements EmailWorkerInterface
     /**
      * Send an email via the first available service.
      *
-     * @param array  $email
+     * @param  EmailDTO  $emailDTO
      * @return bool
      */
     public function sendEmail(EmailDTO $emailDTO): bool
