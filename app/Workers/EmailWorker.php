@@ -3,6 +3,7 @@
 namespace App\Workers;
 
 use App\Clients\EmailClient;
+use App\DTO\EmailDTO;
 use App\Enums\EmailLogStatus;
 use App\Repositories\EmailLogRepositoryInterface;
 
@@ -34,13 +35,13 @@ class EmailWorker implements EmailWorkerInterface
      * @param array  $email
      * @return bool
      */
-    public function sendEmail(array $email): bool
+    public function sendEmail(EmailDTO $emailDTO): bool
     {
         foreach ($this->mailers as $mailer) {
-            if ($mailer->send($email)) {
+            if ($mailer->send($emailDTO)) {
 
                 $this->emailLogRepository->update(
-                    $email['id'],
+                    $emailDTO->id,
                     [
                         'status' => EmailLogStatus::SENT,
                     ]
@@ -51,7 +52,7 @@ class EmailWorker implements EmailWorkerInterface
         }
 
         $this->emailLogRepository->update(
-            $email['id'],
+            $emailDTO->id,
             [
                 'status' => EmailLogStatus::FAILED,
             ]

@@ -2,6 +2,7 @@
 
 namespace App\Clients;
 
+use App\DTO\EmailDTO;
 use App\Repositories\EmailLogRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
@@ -52,34 +53,34 @@ class MailjetEmailClient implements EmailClient
     }
 
     /**
-     * @param  array  $email
+     * @param  EmailDTO  $emailDTO
      * @return bool
      */
-    public function send(array $email): bool
+    public function send(EmailDTO $emailDTO): bool
     {
         try {
             $response = $this->client->post(Resources::$Email, ['body' => [
                 'Messages' => [
                     [
                         'From' => [
-                            'Email' => $email['from']['email'],
-                            'Name' => $email['from']['name'],
+                            'Email' => $emailDTO->from['email'],
+                            'Name' => $emailDTO->from['name'],
                         ],
                         'To' => [
                             [
-                                'Email' => $email['to']['email'],
-                                'Name' => $email['to']['name'],
+                                'Email' => $emailDTO->to['email'],
+                                'Name' => $emailDTO->to['name'],
                             ]
                         ],
-                        'Subject' => $email['subject'],
-                        'HTMLPart' => $email['subject'],
-                        'CustomID' => $email['id'],
+                        'Subject' => $emailDTO->subject,
+                        'HTMLPart' => $emailDTO->htmlPart,
+                        'CustomID' => $emailDTO->id,
                     ]
                 ]
             ]]);
 
             $this->emailLogRepository->update(
-                $email['id'],
+                $emailDTO->id,
                 [
                     'email_provider' => self::CLIENT_NAME,
                     'response' => json_encode($response->getBody()),

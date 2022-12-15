@@ -2,6 +2,7 @@
 
 namespace App\Clients;
 
+use App\DTO\EmailDTO;
 use App\Repositories\EmailLogRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use SendGrid;
@@ -42,24 +43,24 @@ class SendgridEmailClient implements EmailClient
     }
 
     /**
-     * @param  array  $email
+     * @param  EmailDTO  $emailDTO
      * @return bool
      */
-    public function send(array $email): bool
+    public function send(EmailDTO $emailDTO): bool
     {
         try {
             $sendgridMail = new Mail(
-                new SendGrid\Mail\From($email['from']['email'], $email['from']['name']),
-                new SendGrid\Mail\To($email['to']['email'], $email['to']['name']),
-                new SendGrid\Mail\Subject($email['subject']),
+                new SendGrid\Mail\From($emailDTO->from['email'], $emailDTO->from['name']),
+                new SendGrid\Mail\To($emailDTO->to['email'], $emailDTO->to['name']),
+                new SendGrid\Mail\Subject($emailDTO->subject),
                 null,
-                new SendGrid\Mail\HtmlContent($email['htmlPart']),
+                new SendGrid\Mail\HtmlContent($emailDTO->htmlPart),
             );
 
             $response = $this->client->send($sendgridMail);
 
             $this->emailLogRepository->update(
-                $email['id'],
+                $emailDTO->id,
                 [
                     'email_provider' => self::CLIENT_NAME,
                     'response' => json_encode($response->body()),

@@ -2,11 +2,13 @@
 
 namespace App\Workers;
 
+use App\DTO\EmailDTO;
+
 interface EmailWorkerInterface
 {
     /**
-     * @param  array  $email
+     * @param  EmailDTO  $emailDTO
      * @return mixed
      */
-    public function sendEmail(array $email): bool;
+    public function sendEmail(EmailDTO $emailDTO): bool;
 }

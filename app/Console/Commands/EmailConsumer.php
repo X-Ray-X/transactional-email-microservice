@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\DTO\EmailDTO;
 use App\Workers\EmailWorkerInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -48,15 +49,15 @@ class EmailConsumer extends Command
     {
         try {
             \Amqp::consume($this->queueName, function ($message, $resolver) {
-                $messageData = json_decode($message->body, true);
+                $emailDTO = new EmailDTO(json_decode($message->body, true));
 
-                $this->emailWorker->sendEmail($messageData);
+                $this->emailWorker->sendEmail($emailDTO);
 
                 $resolver->acknowledge($message);
 
                 $this->info(sprintf(
                     'Email message acknowledged - ID: %s',
-                    $messageData['id']
+                    $emailDTO->id
                 ));
             });
         } catch (\Exception $exception) {

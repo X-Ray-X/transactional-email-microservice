@@ -2,6 +2,8 @@
 
 namespace App\Clients;
 
+use App\DTO\EmailDTO;
+
 interface EmailClient
 {
     /**
@@ -14,8 +16,8 @@ interface EmailClient
     /**
      * Send an email message.
      *
-     * @param  array  $email
+     * @param  EmailDTO  $emailDTO
      * @return bool
      */
-    public function send(array $email): bool;
+    public function send(EmailDTO $emailDTO): bool;
 }
