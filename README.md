@@ -22,6 +22,12 @@ The email API endpoint can be accessed at http://localhost/api/v1/emails.
 > make up \
 > make down
 
+### Provide your API keys for Mailjet and Sendgrid services in the .env file:
+> SENDGRID_API_KEY= \
+> \
+> MAILJET_KEY= \
+> MAILJET_SECRET=
+
 ### Testing
 
 > make test
