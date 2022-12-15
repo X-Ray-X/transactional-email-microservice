@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CreateEmail extends Command
 {
+    private Email $email;
+
     /**
      * The name and signature of the console command.
      *
@@ -21,6 +23,13 @@ class CreateEmail extends Command
      * @var string
      */
     protected $description = 'Creates an email message to be sent through the service';
+
+    public function __construct(Email $email)
+    {
+        parent::__construct();
+
+        $this->email = $email;
+    }
 
     /**
      * Execute the console command.
@@ -60,14 +69,16 @@ class CreateEmail extends Command
 
         $this->info('Requesting new email...');
 
-        $emailSent = (new Email(
+        $emailSent = $this->email->create(
             $payload['from'],
             $payload['to'],
             $payload['subject'],
             $payload['htmlPart'],
-        ))->send();
+        )->send();
 
         $this->info(json_encode($emailSent));
+
+        $this->info('Done.');
 
         return Command::SUCCESS;
     }

@@ -10,18 +10,19 @@ class EmailController extends Controller
 {
     /**
      * @param  SendEmailPost  $request
+     * @param  Email  $email
      * @return JsonResponse
      */
-    public function send(SendEmailPost $request): JsonResponse
+    public function send(SendEmailPost $request, Email $email): JsonResponse
     {
         $requestBody = $request->validated();
 
-        $emailSent = (new Email(
+        $emailSent = $email->create(
             $requestBody['from'],
             $requestBody['to'],
             $requestBody['subject'],
             $requestBody['htmlPart'],
-        ))->send();
+        )->send();
 
         return response()
             ->json([ 'data' => $emailSent ])

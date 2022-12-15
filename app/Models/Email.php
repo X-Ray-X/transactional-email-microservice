@@ -9,16 +9,18 @@ use Ramsey\Uuid\Uuid;
 
 class Email
 {
-    private EmailDTO $emailDTO;
     private EmailLogRepositoryInterface $emailLogRepository;
+    private EmailDTO $emailDTO;
 
     /**
-     * @param  array  $from
-     * @param  array  $to
-     * @param  string  $subject
-     * @param  string  $htmlPart
+     * @param  EmailLogRepositoryInterface  $emailLogRepository
      */
-    public function __construct(array $from, array $to, string $subject, string $htmlPart)
+    public function __construct(EmailLogRepositoryInterface $emailLogRepository)
+    {
+        $this->emailLogRepository = $emailLogRepository;
+    }
+
+    public function create(array $from, array $to, string $subject, string $htmlPart): Email
     {
         $this->emailDTO = new EmailDTO([
             'id' => Uuid::uuid4(),
@@ -28,12 +30,12 @@ class Email
             'htmlPart' => $htmlPart,
         ]);
 
-        $this->emailLogRepository = app()->make(EmailLogRepositoryInterface::class);
-
         $this->emailLogRepository->create([
             'email_id' => $this->emailDTO->id,
             'status' => EmailLogStatus::NEW,
         ]);
+
+        return $this;
     }
 
     /**
