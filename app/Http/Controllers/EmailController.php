@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SendEmailPost;
 use App\Models\Email;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmailController extends Controller
 {
@@ -26,6 +27,6 @@ class EmailController extends Controller
 
         return response()
             ->json([ 'data' => $emailSent ])
-            ->setStatusCode(202);
+            ->setStatusCode(Response::HTTP_ACCEPTED);
     }
 }
