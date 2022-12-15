@@ -23,7 +23,7 @@ class SendgridEmailClient implements EmailClient
     public function __construct(EmailLogRepositoryInterface $emailLogRepository, string $apiKey)
     {
         $this->emailLogRepository =$emailLogRepository;
-        $this->client = new SendGrid($apiKey);
+        $this->setClient(new SendGrid($apiKey));
     }
 
     /**
@@ -32,6 +32,15 @@ class SendgridEmailClient implements EmailClient
     public function __toString(): string
     {
         return self::CLIENT_NAME;
+    }
+
+    /**
+     * @param  SendGrid  $client
+     * @return void
+     */
+    public function setClient(SendGrid $client): void
+    {
+        $this->client = $client;
     }
 
     /**

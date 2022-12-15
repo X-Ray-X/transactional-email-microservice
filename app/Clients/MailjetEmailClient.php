@@ -25,15 +25,14 @@ class MailjetEmailClient implements EmailClient
     public function __construct(EmailLogRepositoryInterface $emailLogRepository, string $key, string $secret, bool $performer = true, string $version = 'v3.1')
     {
         $this->emailLogRepository = $emailLogRepository;
-
-        $this->client = new Client(
+        $this->setClient(new Client(
             $key,
             $secret,
             $performer,
             [
                 'version' => $version
             ]
-        );
+        ));
     }
 
     /**
@@ -42,6 +41,15 @@ class MailjetEmailClient implements EmailClient
     public function __toString(): string
     {
         return self::CLIENT_NAME;
+    }
+
+    /**
+     * @param  Client  $client
+     * @return void
+     */
+    public function setClient(Client $client): void
+    {
+        $this->client = $client;
     }
 
     /**
