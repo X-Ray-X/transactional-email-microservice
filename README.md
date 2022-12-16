@@ -44,6 +44,20 @@ Use the following credentials in a database client of your choice:
 > DB_USERNAME: sail \
 > DB_PASSWORD: password
 
+### RabbitMQ access:
+
+> host: http://localhost:15672 \
+> username: admin \
+> password: admin
+
+### Queue consumers / scaling
+
+Email consumer command is being run in a separate container `queue_consumer` and can be scaled according to the needs using settings in `docker-compose.yml`:
+
+> deploy: \
+> &nbsp;&nbsp;&nbsp;&nbsp; mode: replicated \
+> &nbsp;&nbsp;&nbsp;&nbsp; replicas: 2 
+
 ## Registering additional fallback email providers:
 
 - Create a new email client class implementing the `Clients/EmailClient.php` interface.
