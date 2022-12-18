@@ -2,7 +2,7 @@
 
 namespace App\Workers;
 
-use App\Clients\EmailClient;
+use App\Clients\EmailClientInterface;
 use App\DTO\EmailDTO;
 use App\Enums\EmailLogStatus;
 use App\Repositories\EmailLogRepositoryInterface;
@@ -10,7 +10,7 @@ use App\Repositories\EmailLogRepositoryInterface;
 class EmailWorker implements EmailWorkerInterface
 {
     /**
-     * @var EmailClient[]
+     * @var EmailClientInterface[]
      */
     private array $mailers;
 

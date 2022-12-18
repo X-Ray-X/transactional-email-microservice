@@ -60,7 +60,7 @@ Email consumer command is being run in a separate container `queue_consumer` and
 
 ## Registering additional fallback email providers:
 
-- Create a new email client class implementing the `Clients/EmailClient.php` interface.
+- Create a new email client class implementing the `Clients/EmailClientInterface.php`.
 - Register your new client as a singleton in `Providers/EmailServiceProvider.php`.
 - Add `$app->make(YourEmailClient::class)` to the binding script of `Workers/EmailWorker.php` in `Providers/AppServiceProvider.php`.
 - The EmailWorker class will go over the list of provided email clients and fulfill the request with the first service available.

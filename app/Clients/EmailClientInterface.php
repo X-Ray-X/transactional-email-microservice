@@ -4,7 +4,7 @@ namespace App\Clients;
 
 use App\DTO\EmailDTO;
 
-interface EmailClient
+interface EmailClientInterface
 {
     /**
      * Get connector client instance.

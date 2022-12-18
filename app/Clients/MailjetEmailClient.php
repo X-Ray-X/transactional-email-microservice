@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Mailjet\Client;
 use Mailjet\Resources;
 
-class MailjetEmailClient implements EmailClient
+class MailjetEmailClient implements EmailClientInterface
 {
     public const CLIENT_NAME = 'Mailjet';
 

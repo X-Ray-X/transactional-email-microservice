@@ -9,7 +9,7 @@ use SendGrid;
 use SendGrid\Mail\Mail;
 use Symfony\Component\HttpFoundation\Response;
 
-class SendgridEmailClient implements EmailClient
+class SendgridEmailClient implements EmailClientInterface
 {
     public const CLIENT_NAME = 'Sendgrid';
 
