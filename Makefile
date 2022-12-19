@@ -1,6 +1,6 @@
 .PHONY: first-run prepare-env up down composer-install migrate migrate-rollback test
 
-first-run: prepare-env up composer-install generate-key migrate
+first-run: prepare-env up composer-install migrate
 
 prepare-env:
 	cp .env.example .env
